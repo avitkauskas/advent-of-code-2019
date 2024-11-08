@@ -8,9 +8,8 @@ macro_rules! read_input {
     };
 }
 
-pub fn read_input<P: AsRef<Path>>(bin_path: P) -> String {
-    let file_name = bin_path
-        .as_ref()
+pub fn read_input(bin_path: &str) -> String {
+    let file_name = Path::new(bin_path)
         .file_name()
         .unwrap()
         .to_str()
