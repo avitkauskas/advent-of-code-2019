@@ -1,23 +1,40 @@
-use std::fs;
+use aoc2019::read_input;
 
 fn main() {
-    // Read input file
-    let input = fs::read_to_string("../../inputs/d02.txt").expect("Failed to read input file");
+    let input = read_input!();
 
     // Parse input into vector of numbers
-    let mut program: Vec<usize> = input
+    let program: Vec<usize> = input
         .trim()
         .split(',')
         .map(|x| x.parse().expect("Failed to parse number"))
         .collect();
 
-    // Restore the "1202 program alarm" state
-    program[1] = 12;
-    program[2] = 2;
+    // Solve part 1
+    let part1_result = part1(&program);
+    println!("Part 1: Value at position 0: {}", part1_result);
 
-    // Run the program
-    let result = run_intcode(program);
-    println!("Value at position 0: {}", result);
+    // Solve part 2
+    match part2(&program) {
+        Some(result) => println!("Part 2: 100 * noun + verb = {}", result),
+        None => println!("Part 2: No solution found!"),
+    }
+}
+
+fn part1(program: &Vec<usize>) -> usize {
+    let mut modified_program = program.clone();
+    modified_program[1] = 12;
+    modified_program[2] = 2;
+    run_intcode(modified_program)
+}
+
+fn part2(program: &Vec<usize>) -> Option<usize> {
+    const TARGET_OUTPUT: usize = 19690720;
+
+    match find_noun_verb(program, TARGET_OUTPUT) {
+        Some((noun, verb)) => Some(100 * noun + verb),
+        None => None,
+    }
 }
 
 fn run_intcode(mut program: Vec<usize>) -> usize {
@@ -44,4 +61,19 @@ fn run_intcode(mut program: Vec<usize>) -> usize {
     }
 
     program[0]
+}
+
+fn find_noun_verb(original_program: &Vec<usize>, target: usize) -> Option<(usize, usize)> {
+    for noun in 0..=99 {
+        for verb in 0..=99 {
+            let mut program = original_program.clone();
+            program[1] = noun;
+            program[2] = verb;
+
+            if run_intcode(program) == target {
+                return Some((noun, verb));
+            }
+        }
+    }
+    None
 }

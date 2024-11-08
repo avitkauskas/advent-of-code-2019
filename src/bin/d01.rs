@@ -1,5 +1,7 @@
+use aoc2019::read_input;
+
 fn main() {
-    let input = std::fs::read_to_string("../../inputs/d01.txt").unwrap();
+    let input = read_input!();
     let modules = input.lines().map(|line| line.parse::<i32>().unwrap());
 
     let part1: i32 = modules.clone().map(|mass| (mass / 3) - 2).sum();
